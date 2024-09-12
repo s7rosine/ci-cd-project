@@ -48,7 +48,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                docker build -t rosinebelle/cicdproject:${BUILD_NUMBER} -f Dockerfile .
+                docker build -t rosinebelle/cicdproject:${BUILD_NUMBER} .
                 '''
             }
         }
