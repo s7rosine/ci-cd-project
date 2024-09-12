@@ -12,16 +12,12 @@ pipeline {
             }
         }
 
-        stage('Testing') {
-            agent {
-                docker { image 'maven:3.8.5-openjdk-18' }
-            }
+        stage('Test') {
             steps {
-                sh '''
-                pwd
-                mvn clean test
-                ls -la target
-                '''
+                echo 'Running Maven tests...'
+                sh 'mvn clean test'
+                sh 'mvn package'
+                sh 'ls -la target' // Check if the target directory exists
             }
         }
 
@@ -56,7 +52,7 @@ pipeline {
         stage('Push Docker Image') {
             when { 
                 expression { 
-                    return env.BRANCH_NAME == 'main'
+                    return env.BRANCH_NAME == 'main' // Ensure BRANCH_NAME is correctly used
                 }
             }
             steps {
