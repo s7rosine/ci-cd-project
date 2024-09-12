@@ -19,9 +19,9 @@ pipeline {
             steps {
                 sh '''
                 pwd
-                mvn clean
+                mvn clean test
                 mvn package
-                mvn test
+                
                 '''
             }
         }
