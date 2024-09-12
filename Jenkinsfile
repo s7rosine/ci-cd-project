@@ -18,7 +18,6 @@ pipeline {
             }
             steps {
                 sh '''
-                cd ci-cd-project
                 pwd
                 mvn clean 
                 mvn test  
