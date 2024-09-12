@@ -5,6 +5,10 @@ pipeline {
         SONARQUBE_ENV = 'Sonar'
     }
 
+    tools {
+        maven 'maven' // Ensure Maven is properly defined in Jenkins tools
+    }
+
     stages {
         stage('Checkout') {
             steps {
