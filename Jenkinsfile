@@ -21,7 +21,6 @@ pipeline {
                 pwd
                 mvn clean test
                 mvn package
-                
                 '''
             }
         }
@@ -33,9 +32,11 @@ pipeline {
             steps {
                 script {
                     echo 'Running SonarQube analysis...'
-                    withSonarQubeEnv("${env.SONARQUBE_ENV}") {
+                    withSonarQubeEnv("${env.SONARQUBE_ENV}") { 
                         sh 'mvn sonar:sonar'
                     }
+                }
+            }
         }
 
         stage('Login to DockerHub') {
@@ -47,7 +48,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                docker build -t rosinebelle/cicdproject:${BUILD_NUMBER} .
+                docker build -t rosinebelle/cicdproject:${BUILD_NUMBER} -f Dockerfile .
                 '''
             }
         }
@@ -71,7 +72,7 @@ pipeline {
             slackSend (
                 channel: '#development-alerts',
                 color: 'good',
-                message: "SUCCESSFUL: Application s7rosine-ci-cd-project Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
+                message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
             )
         }
 
@@ -79,7 +80,7 @@ pipeline {
             slackSend (
                 channel: '#development-alerts',
                 color: 'warning',
-                message: "UNSTABLE: Application s7rosine-ci-cd-project Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
+                message: "UNSTABLE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
             )
         }
 
@@ -87,7 +88,7 @@ pipeline {
             slackSend (
                 channel: '#development-alerts',
                 color: '#FF0000',
-                message: "FAILURE: Application s7rosine-ci-cd-project Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
+                message: "FAILURE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
             )
         }
 
