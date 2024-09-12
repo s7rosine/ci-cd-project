@@ -2,10 +2,10 @@ pipeline {
     agent any
     environment {
         DOCKERHUB_CREDENTIALS = credentials('DockerHub-Cred')
+        SONARQUBE_ENV = 'sonar'
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/s7rosine/ci-cd-project.git'
@@ -19,27 +19,19 @@ pipeline {
             steps {
                 sh '''
                 pwd
-                mvn clean 
-                mvn test  
+                mvn clean
+                mvn test
                 '''
             }
         }
 
         stage('SonarQube Analysis') {
-            agent {
-                docker {
-                    image 'sonarsource/sonar-scanner-cli:5.0.1'
-                }
-            }
-            environment {
-                CI = 'true'
-                scannerHome = '/opt/sonar-scanner'
-            }
             steps {
-                withSonarQubeEnv('Sonar') {
-                    sh '''
-                    ${scannerHome}/bin/sonar-scanner
-                    '''
+                script {
+                    echo 'Running SonarQube analysis...'
+                    withSonarQubeEnv("${env.SONARQUBE_ENV}") { 
+                        sh 'mvn sonar:sonar'
+                    }
                 }
             }
         }
@@ -53,7 +45,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                docker build -t rosinebelle/cicdproject:${BUILD_NUMBER} -f Dockerfile .
+                docker build -t rosinebelle/cicdproject:${BUILD_NUMBER} .
                 '''
             }
         }
@@ -61,7 +53,7 @@ pipeline {
         stage('Push Docker Image') {
             when { 
                 expression { 
-                    return env.GIT_BRANCH == 'origin/main'
+                    return env.BRANCH_NAME == 'main'
                 }
             }
             steps {
