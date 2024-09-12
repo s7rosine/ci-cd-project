@@ -20,6 +20,7 @@ pipeline {
                 sh '''
                 pwd
                 mvn clean
+                mvn package
                 mvn test
                 '''
             }
