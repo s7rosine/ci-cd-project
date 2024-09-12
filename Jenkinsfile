@@ -65,6 +65,15 @@ pipeline {
                 '''
             }
         }
+         stage('run container') {
+     
+           steps {
+               sh '''
+               docker run -itd --name ci-cd-project rosinebelle/cicdproject:v1
+               docker ps|grep ci-cd-project
+               '''
+
+
     }
 
     post {
