@@ -6,6 +6,12 @@ pipeline {
 
     stages {
 
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'git@github.com:s7rosine/ci-cd-project.git'
+            }
+        }
+
         stage('Testing') {
             agent {
                 docker { image 'maven:3.8.7-openjdk-18' }
@@ -30,7 +36,10 @@ pipeline {
             }
             steps {
                 withSonarQubeEnv('Sonar') {
-                    sh "${scannerHome}/bin/sonar-scanner"
+                    sh '''
+                    cd ci-cd-project
+                    ${scannerHome}/bin/sonar-scanner
+                    '''
                 }
             }
         }
@@ -44,7 +53,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                cd ${WORKSPACE}/ci-cd-project
+                cd ci-cd-project
                 docker build -t rosinebelle/cicdproject:${BUILD_NUMBER} -f Dockerfile .
                 '''
             }
@@ -58,7 +67,8 @@ pipeline {
             }
             steps {
                 sh '''
-                 docker push rosinebelle/cicdproject:${BUILD_NUMBER} -f Dockerfile .
+                cd ci-cd-project
+                docker push rosinebelle/cicdproject:${BUILD_NUMBER}
                 '''
             }
         }
