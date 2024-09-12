@@ -1,14 +1,14 @@
 pipeline {
     agent any
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('del-docker-hub-auth')
+        DOCKERHUB_CREDENTIALS = credentials('DockerHub-Cred')
     }
 
     stages {
 
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'git@github.com:s7rosine/ci-cd-project.git'
+                git branch: 'main', url: 'https://github.com/s7rosine/ci-cd-project.git'
             }
         }
 
@@ -19,6 +19,7 @@ pipeline {
             steps {
                 sh '''
                 cd ci-cd-project
+                mvn clean 
                 mvn test  
                 '''
             }
@@ -37,7 +38,6 @@ pipeline {
             steps {
                 withSonarQubeEnv('Sonar') {
                     sh '''
-                    cd ci-cd-project
                     ${scannerHome}/bin/sonar-scanner
                     '''
                 }
@@ -53,7 +53,6 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                cd ci-cd-project
                 docker build -t rosinebelle/cicdproject:${BUILD_NUMBER} -f Dockerfile .
                 '''
             }
@@ -67,7 +66,6 @@ pipeline {
             }
             steps {
                 sh '''
-                cd ci-cd-project
                 docker push rosinebelle/cicdproject:${BUILD_NUMBER}
                 '''
             }
