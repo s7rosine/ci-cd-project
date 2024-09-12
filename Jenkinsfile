@@ -19,7 +19,6 @@ pipeline {
             steps {
                 sh '''
                 pwd
-                mv install
                 mvn clean test
                 mvn package
                 
@@ -28,14 +27,15 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
+            agent {
+                docker { image 'maven:3.8.5-openjdk-18' }
+            }
             steps {
                 script {
                     echo 'Running SonarQube analysis...'
-                    withSonarQubeEnv("${env.SONARQUBE_ENV}") { 
+                    withSonarQubeEnv("${env.SONARQUBE_ENV}") {
                         sh 'mvn sonar:sonar'
                     }
-                }
-            }
         }
 
         stage('Login to DockerHub') {
@@ -71,7 +71,7 @@ pipeline {
             slackSend (
                 channel: '#development-alerts',
                 color: 'good',
-                message: "SUCCESSFUL: Application s7rosine-do-it-yourself-cart Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
+                message: "SUCCESSFUL: Application s7rosine-ci-cd-project Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
             )
         }
 
@@ -79,7 +79,7 @@ pipeline {
             slackSend (
                 channel: '#development-alerts',
                 color: 'warning',
-                message: "UNSTABLE: Application s7rosine-do-it-yourself-cart Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
+                message: "UNSTABLE: Application s7rosine-ci-cd-project Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
             )
         }
 
@@ -87,7 +87,7 @@ pipeline {
             slackSend (
                 channel: '#development-alerts',
                 color: '#FF0000',
-                message: "FAILURE: Application s7rosine-do-it-yourself-cart Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
+                message: "FAILURE: Application s7rosine-ci-cd-project Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
             )
         }
 
