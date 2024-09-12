@@ -48,7 +48,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                docker build -t rosinebelle/cicdproject:${BUILD_NUMBER} .
+                docker build -t rosinebelle/cicdproject:v1.0.0 .
                 '''
             }
         }
@@ -61,19 +61,19 @@ pipeline {
             }
             steps {
                 sh '''
-                docker push rosinebelle/cicdproject:${BUILD_NUMBER}
+                docker push rosinebelle/cicdproject:v1.0.0
                 '''
             }
         }
-         stage('run container') {
-     
-           steps {
-               sh '''
-               docker run -itd --name ci-cd-project rosinebelle/cicdproject:v1
-               docker ps|grep ci-cd-project
-               '''
 
-
+        stage('Run Container') {
+            steps {
+                sh '''
+                docker run -itd --name ci-cd-project rosinebelle/cicdproject:v1.0.0
+                docker ps | grep ci-cd-project
+                '''
+            }
+        }
     }
 
     post {
