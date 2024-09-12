@@ -19,6 +19,7 @@ pipeline {
             steps {
                 sh '''
                 pwd
+                mv install
                 mvn clean test
                 mvn package
                 
