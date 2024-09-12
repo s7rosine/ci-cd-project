@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         DOCKERHUB_CREDENTIALS = credentials('DockerHub-Cred')
-        SONARQUBE_ENV = 'sonar'
+        SONARQUBE_ENV = 'Sonar'
     }
 
     stages {
