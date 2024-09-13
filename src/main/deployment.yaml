@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cicdproject-deployment
+  labels:
+    app: cicdproject
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cicdproject
+  template:
+    metadata:
+      labels:
+        app: cicdproject
+    spec:
+      containers:
+      - name: cicdproject-container
+        image: rosinebelle/cicdproject:v1.0.0
+        ports:
+        - containerPort: 8080
+      restartPolicy: Always  # Add a restart policy (default is Always)
