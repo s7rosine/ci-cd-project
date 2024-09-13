@@ -15,8 +15,8 @@ spec:
         app: cicdproject
     spec:
       containers:
-      - name: cicdproject-container
-        image: rosinebelle/cicdproject:v1.0.0
-        ports:
-        - containerPort: 8080
-      restartPolicy: Always  # Add a restart policy (default is Always)
+        - name: cicdproject-container
+          image: rosinebelle/cicdproject:v1.0.0
+          ports:
+            - containerPort: 8080
+     restartPolicy: Always
